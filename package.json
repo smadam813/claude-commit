@@ -1,11 +1,22 @@
 {
   "name": "claude-commit",
+  "publisher": "Adam Keech",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smadam813/claude-commit.git"
+  },
   "displayName": "Claude Commit",
   "description": "Generate commit messages with Claude Code",
   "version": "0.0.1",
-  "engines": { "vscode": "^1.85.0" },
-  "categories": ["SCM Providers"],
-  "activationEvents": ["onStartupFinished"],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "SCM Providers"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -16,7 +27,7 @@
       }
     ],
     "menus": {
-      "scm/inputBox": [
+      "scm/title": [
         {
           "command": "claudeCommit.generate",
           "when": "scmProvider == git",
@@ -50,8 +61,8 @@
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
+    "@types/node": "^20.19.39",
     "@types/vscode": "^1.85.0",
-    "@types/node": "^20.0.0",
     "typescript": "^5.3.0"
   }
 }

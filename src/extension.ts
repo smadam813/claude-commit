@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
@@ -58,15 +58,18 @@ export function activate(context: vscode.ExtensionContext) {
               diff,
             ].join('\n');
 
-            const { stdout } = await execAsync(
-              `${shellQuote(claudePath)} -p --model ${shellQuote(model)}`,
-              {
-                cwd,
-                input: prompt,
-                maxBuffer: 1024 * 1024,
-                // @ts-ignore - `input` is supported via the options bag in newer Node
-              } as any
-            );
+            const stdout: string = await new Promise<string>((resolve, reject) => {
+              const proc = spawn(claudePath, ['-p', '--model', model], { cwd });
+              let out = '', err = '';
+              proc.stdout.on('data', (d) => (out += d.toString()));
+              proc.stderr.on('data', (d) => (err += d.toString()));
+              proc.on('error', reject);
+              proc.on('close', (code) =>
+                code === 0 ? resolve(out) : reject(new Error(err || `exit ${code}`))
+              );
+              proc.stdin.write(prompt);
+              proc.stdin.end();
+            });
 
             let message = stdout.trim();
             if (message.length > maxChars) {
@@ -91,10 +94,6 @@ function getFirstGitRepo(): vscode.SourceControl | undefined {
   const gitExt = vscode.extensions.getExtension('vscode.git')?.exports;
   const api = gitExt?.getAPI(1);
   return api?.repositories?.[0];
-}
-
-function shellQuote(s: string): string {
-  return `"${s.replace(/"/g, '\\"')}"`;
 }
 
 export function deactivate() {}
