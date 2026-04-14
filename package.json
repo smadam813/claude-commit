@@ -1,0 +1,57 @@
+{
+  "name": "claude-commit",
+  "displayName": "Claude Commit",
+  "description": "Generate commit messages with Claude Code",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["SCM Providers"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeCommit.generate",
+        "title": "Generate Commit Message (Claude)",
+        "icon": "$(sparkle)"
+      }
+    ],
+    "menus": {
+      "scm/inputBox": [
+        {
+          "command": "claudeCommit.generate",
+          "when": "scmProvider == git",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Claude Commit",
+      "properties": {
+        "claudeCommit.model": {
+          "type": "string",
+          "default": "claude-haiku-4-5",
+          "description": "Claude model to use"
+        },
+        "claudeCommit.maxChars": {
+          "type": "number",
+          "default": 400,
+          "description": "Maximum length of generated commit message"
+        },
+        "claudeCommit.claudePath": {
+          "type": "string",
+          "default": "claude",
+          "description": "Path to the claude CLI binary"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  }
+}
